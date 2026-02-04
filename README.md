@@ -122,25 +122,6 @@ streamlit run app.py
 
 ---
 
-## Deployment
-
-The application is compatible with Streamlit Cloud.
-
-If Prophet fails to build during deployment, add a file named `packages.txt` to the project root containing:
-
-build-essential
-
----
-
-## Intended Audience
-
-- Business and Operations Teams  
-- Retail Analysts  
-- Supply Chain and Planning Teams  
-- Hiring Managers evaluating applied data science projects  
-
----
-
 ## Author
 
 Sarthak Shandilya  
