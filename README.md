@@ -96,24 +96,6 @@ All sections include plain-English explanations to ensure usability for non-tech
 
 ---
 
-## Project Structure
-
-DemandIQ/
-├── app.py
-├── README.md
-├── requirements.txt
-├── .gitignore
-├── src/
-│   ├── __init__.py
-│   ├── data_loader.py
-│   ├── prophet_model.py
-│   ├── insight_engine.py
-│   └── forecasting.py
-└── assets/
-    └── screenshots/
-
----
-
 ## Data Availability
 
 Raw datasets are not included in this repository due to size and licensing considerations.
