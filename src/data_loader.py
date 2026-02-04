@@ -17,7 +17,7 @@ def load_data(data_path="data/raw"):
     data_path = Path(data_path)
     train_path = data_path / "train.csv"
 
-    # If data is missing, fail gracefully
+    # Graceful failure if data is missing
     if not train_path.exists():
         st.error(
             "❌ Dataset not found.\n\n"
@@ -34,8 +34,7 @@ def load_data(data_path="data/raw"):
             train_path,
             encoding="latin1",
             engine="python",
-            on_bad_lines="skip",
-            low_memory=False
+            on_bad_lines="skip"
         )
     except Exception as e:
         st.error(
