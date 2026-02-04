@@ -4,23 +4,44 @@ import streamlit as st
 
 
 def load_data(data_path="data/raw"):
-    data_path = Path(data_path)
+    """
+    Loads retail sales data for DemandIQ.
 
+    Expected file:
+    data/raw/train.csv
+
+    The dataset is intentionally not included in the repository
+    due to size and licensing constraints.
+    """
+
+    data_path = Path(data_path)
     train_path = data_path / "train.csv"
 
+    # If data is missing, fail gracefully
     if not train_path.exists():
         st.error(
-            "❌ Data file not found.\n\n"
-            "This application expects a `train.csv` file at:\n"
+            "❌ Dataset not found.\n\n"
+            "Expected file location:\n"
             "`data/raw/train.csv`\n\n"
-            "The dataset is not included in the repository due to size/licensing reasons.\n"
-            "Please follow the instructions in the README to run the app locally."
+            "The dataset is not included in this repository.\n"
+            "Please see the README for instructions on running the app locally."
         )
         st.stop()
 
+    # Robust CSV loading for messy real-world data
     try:
-        train = pd.read_csv(train_path, encoding="utf-8")
-    except UnicodeDecodeError:
-        train = pd.read_csv(train_path, encoding="latin1")
+        train = pd.read_csv(
+            train_path,
+            encoding="latin1",
+            engine="python",
+            on_bad_lines="skip",
+            low_memory=False
+        )
+    except Exception as e:
+        st.error(
+            "❌ Failed to load dataset.\n\n"
+            f"Error details:\n{e}"
+        )
+        st.stop()
 
     return train, None
