@@ -40,6 +40,22 @@ st.divider()
 train = load_data()
 
 # -------------------------------------------------
+# Schema validation (MANDATORY)
+# -------------------------------------------------
+required_columns = {"Store", "Date", "Sales"}
+
+if not required_columns.issubset(train.columns):
+    st.error(
+        "❌ Dataset schema mismatch.\n\n"
+        "This app expects the following columns:\n"
+        "- Store\n"
+        "- Date\n"
+        "- Sales\n\n"
+        "Please provide a dataset with these columns to run the app."
+    )
+    st.stop()
+
+# -------------------------------------------------
 # Sidebar navigation
 # -------------------------------------------------
 st.sidebar.header("Navigation")
@@ -532,5 +548,6 @@ st.caption(
     Tools used: Python, Pandas, Statsmodels, Prophet, Plotly, Streamlit
     """
 )
+
 
 
