@@ -39,6 +39,10 @@ st.divider()
 # -------------------------------------------------
 train, _ = load_data()
 
+# If data is missing, stop app execution cleanly
+if train is None or train.empty:
+    st.stop()
+
 # -------------------------------------------------
 # Sidebar navigation
 # -------------------------------------------------
@@ -532,3 +536,4 @@ st.caption(
     Tools used: Python, Pandas, Statsmodels, Prophet, Plotly, Streamlit
     """
 )
+
