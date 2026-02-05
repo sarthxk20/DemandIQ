@@ -37,7 +37,11 @@ st.divider()
 # -------------------------------------------------
 # Load data
 # -------------------------------------------------
-train = load_data()
+@st.cache_data
+def load_cached_data():
+    return load_data()
+
+train = load_cached_data()
 
 # -------------------------------------------------
 # Schema validation (MANDATORY)
@@ -548,6 +552,7 @@ st.caption(
     Tools used: Python, Pandas, Statsmodels, Prophet, Plotly, Streamlit
     """
 )
+
 
 
 
