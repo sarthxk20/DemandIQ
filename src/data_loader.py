@@ -5,24 +5,14 @@ import streamlit as st
 
 def load_data(data_path="data/raw"):
     data_path = Path(data_path)
-    train_path = data_path / "train.csv"
+    parquet_path = data_path / "train.parquet"
 
-    if not train_path.exists():
-        st.warning(
-            "⚠️ Dataset not found.\n\n"
-            "The raw dataset is not included in this public repository.\n\n"
-            "To run locally:\n"
-            "1. Place `train.csv` in `data/raw/`\n"
-            "2. Restart the app\n\n"
-            "See README for details."
+    if not parquet_path.exists():
+        st.error(
+            "❌ Dataset not found.\n\n"
+            "Expected file: data/raw/train.parquet\n\n"
+            "Please ensure the dataset is available in the repository."
         )
-        st.stop()   # ⛔ HARD STOP — NOTHING after this runs
+        st.stop()
 
-    train = pd.read_csv(
-        train_path,
-        encoding="latin1",
-        engine="python",
-        on_bad_lines="skip"
-    )
-
-    return train
+    return pd.read_parquet(parquet_path)
