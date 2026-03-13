@@ -111,12 +111,9 @@ series_display = series_full[display_start:display_end]         # filtered — f
 # ─────────────────────────────────────────────────────────────────────────────
 
 @st.cache_data(show_spinner=False)
-def get_forecast(store_id: int, horizon: int) -> pd.DataFrame:
-    """Run Prophet on the full store series. Cached by store + horizon."""
-    _store_df = train[train["Store"] == store_id].copy().sort_values("Date")
-    _store_df.set_index("Date", inplace=True)
-    _series   = _store_df["Sales"].asfreq("D", fill_value=0)
-    return prophet_forecast(_series, horizon=horizon, return_intervals=True)
+def get_forecast(series: pd.Series, horizon: int) -> pd.DataFrame:
+    """Run Prophet on the full store series. Cached by series + horizon."""
+    return prophet_forecast(series, horizon=horizon, return_intervals=True)
 
 
 @st.cache_data(show_spinner=False)
@@ -533,7 +530,7 @@ with tab_forecast:
     show_interval = st.toggle("Show prediction interval", value=True)
 
     with st.spinner(f"Generating {HORIZON}-day forecast..."):
-        forecast_df = get_forecast(STORE_ID, HORIZON)
+        forecast_df = get_forecast(series_full, HORIZON)
 
     forecast_series = forecast_df["yhat"]
     forecast_mean   = float(forecast_series.mean())
@@ -606,7 +603,7 @@ with tab_inventory:
 
     # Ensure forecast is available (may have been cached from another tab)
     with st.spinner("Loading forecast..."):
-        forecast_df   = get_forecast(STORE_ID, HORIZON)
+        forecast_df   = get_forecast(series_full, HORIZON)
         forecast_mean = float(forecast_df["yhat"].mean())
         forecast_std  = float(forecast_df["yhat"].std())
 
@@ -661,7 +658,7 @@ with tab_scenario:
     )
 
     with st.spinner("Loading forecast..."):
-        forecast_df   = get_forecast(STORE_ID, HORIZON)
+        forecast_df   = get_forecast(series_full, HORIZON)
         forecast_mean = float(forecast_df["yhat"].mean())
         forecast_std  = float(forecast_df["yhat"].std())
 
@@ -778,7 +775,7 @@ with tab_insight:
     )
 
     with st.spinner("Generating insight..."):
-        forecast_df    = get_forecast(STORE_ID, HORIZON)
+        forecast_df    = get_forecast(series_full, HORIZON)
         forecast_series= forecast_df["yhat"]
         insight        = generate_business_insight(series_full, forecast_series)
 
