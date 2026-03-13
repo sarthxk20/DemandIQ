@@ -274,7 +274,7 @@ with tab_behavior:
         labels={"value": "Units Sold", "index": "Date"},
     )
     fig_sales.update_traces(line_color="#1f77b4")
-    st.plotly_chart(fig_sales, use_container_width=True)
+    st.plotly_chart(fig_sales, width="stretch")
     st.caption(
         "Use the **Historical date range** slider in the sidebar to zoom in. "
         "The forecast always trains on the full history regardless of this filter."
@@ -345,7 +345,7 @@ with tab_changed:
             title="Recent 14-Day Sales Bar",
         )
         fig_14.update_layout(coloraxis_showscale=False, height=300)
-        st.plotly_chart(fig_14, use_container_width=True)
+        st.plotly_chart(fig_14, width="stretch")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB: DEMAND DRIVERS
@@ -390,7 +390,7 @@ with tab_drivers:
                 text=ann.text.split("=", 1)[1],
                 textangle=0, x=0, xanchor="right", yanchor="middle",
             )
-    st.plotly_chart(fig_decomp, use_container_width=True)
+    st.plotly_chart(fig_decomp, width="stretch")
 
     st.info(
         "**Key takeaway:** Weekly seasonality explains most of the sales variation. "
@@ -424,7 +424,7 @@ with tab_models:
         title="Forecast Accuracy Comparison (Lower is Better)",
     )
     fig_comp.update_layout(coloraxis_showscale=False)
-    st.plotly_chart(fig_comp, use_container_width=True)
+    st.plotly_chart(fig_comp, width="stretch")
 
     st.caption(
         "⚠️ These MAE values are **averaged across all stores** in the dataset and shown "
@@ -495,15 +495,21 @@ with tab_models:
             fill="tonexty", fillcolor="rgba(255, 127, 14, 0.15)",
             name="Prediction Interval",
         ))
-        fig_bt.add_vline(
-            x=str(bt["cutoff_date"]), line_dash="dot", line_color="grey",
-            annotation_text="Train / Test split",
-        )
+        # add_vline doesn't handle datetime strings reliably across Plotly versions;
+        # a vertical scatter trace is the safe cross-version alternative.
+        fig_bt.add_trace(go.Scatter(
+            x=[bt["cutoff_date"], bt["cutoff_date"]],
+            y=[0, float(bt["actuals"].max()) * 1.1],
+            mode="lines",
+            line=dict(color="grey", dash="dot", width=1.5),
+            name="Train / Test split",
+            showlegend=True,
+        ))
         fig_bt.update_layout(
             title=f"Backtest: Actual vs Predicted — Store {STORE_ID} (last 20% held out)",
             xaxis_title="Date", yaxis_title="Units Sold",
         )
-        st.plotly_chart(fig_bt, use_container_width=True)
+        st.plotly_chart(fig_bt, width="stretch")
         st.caption(
             f"Training cutoff: {bt['cutoff_date'].strftime('%d %b %Y')}. "
             "Dashed line = Prophet forecast. Shaded band = prediction interval."
@@ -559,7 +565,7 @@ with tab_forecast:
         title=f"{HORIZON}-Day Sales Forecast — Store {STORE_ID}",
         xaxis_title="Date", yaxis_title="Units Sold",
     )
-    st.plotly_chart(fig_forecast, use_container_width=True)
+    st.plotly_chart(fig_forecast, width="stretch")
 
     demand_lo = int(forecast_mean - 1.5 * forecast_std)
     demand_hi = int(forecast_mean + 1.5 * forecast_std)
@@ -638,7 +644,7 @@ with tab_inventory:
     daily_df["Day"]      = daily_df["Date"].dt.strftime("%a %d %b")
     st.dataframe(
         daily_df[["Day", "Expected", "Lower", "Upper"]].set_index("Day"),
-        use_container_width=True,
+        width="stretch",
     )
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -689,7 +695,7 @@ with tab_scenario:
         title="Inventory Range: Baseline vs Scenario",
         text_auto=True,
     )
-    st.plotly_chart(fig_scen, use_container_width=True)
+    st.plotly_chart(fig_scen, width="stretch")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB: ANOMALY DETECTION
@@ -731,7 +737,7 @@ with tab_anomaly:
         }).sort_values("Date", ascending=False)
         anomaly_detail["Date"] = anomaly_detail["Date"].dt.strftime("%a %d %b %Y")
 
-        st.dataframe(anomaly_detail.set_index("Date"), use_container_width=True)
+        st.dataframe(anomaly_detail.set_index("Date"), width="stretch")
         st.caption(
             "**Z-Score** = how many standard deviations the actual sales were from the STL trend. "
             "|Z| > 3 is flagged as anomalous. "
@@ -759,7 +765,7 @@ with tab_anomaly:
             title=f"Sales with Anomalies Highlighted — Store {STORE_ID}",
             xaxis_title="Date", yaxis_title="Units Sold",
         )
-        st.plotly_chart(fig_anom, use_container_width=True)
+        st.plotly_chart(fig_anom, width="stretch")
 
 # ══════════════════════════════════════════════════════════════════════════════
 # TAB: FINAL INSIGHT
