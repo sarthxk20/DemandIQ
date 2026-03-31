@@ -93,6 +93,7 @@ All sections include plain-English explanations to ensure usability for non-tech
 - Scikit-learn
 - Plotly
 - Streamlit
+- Docker
 
 ---
 
