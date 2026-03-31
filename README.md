@@ -96,6 +96,21 @@ All sections include plain-English explanations to ensure usability for non-tech
 
 ---
 
+## Running with Docker
+
+Build the image:
+```bash
+docker build -t demandiq .
+```
+
+Run the container:
+```bash
+docker run -p 8501:8501 demandiq
+```
+
+Then open http://localhost:8501 in your browser.
+
+
 ## Data Availability
 
 Raw datasets are not included in this repository due to size and licensing considerations.
